@@ -15,14 +15,13 @@ const extractText = node => {
   read(tweetShortText)
 }
 
+const isHomeTimeline = container => container.parentNode.parentNode.previousElementSibling.textContent.trim().substr(0, 4) === "Home"
+
 const run = () => {
   const target = document.getElementsByClassName("js-chirp-container")
-  Array.from(target).forEach(column => {
+  Array.from(target).filter(isHomeTimeline).forEach(column => {
     const observer = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        if (mutation.type !== "childList") {
-          return
-        }
+      mutations.filter(mutation => mutation.type === "childList").forEach(mutation => {
         Array.from(mutation.addedNodes).reverse().forEach(extractText)
       })
     })
