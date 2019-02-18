@@ -1,17 +1,14 @@
-const readText = text => {
+const createUttr = text => {
   const uttr = new SpeechSynthesisUtterance(text)
   uttr.rate = 1.6
-  speechSynthesis.speak(uttr)
+  return uttr
 }
 
 const extractText = node => {
   const tweetElement = node.firstElementChild.firstElementChild
-  const headerText = tweetElement.getElementsByTagName("header")[0].innerText.trim()
-  const lengthOfName = headerText.indexOf("@")
-  const name = headerText.substr(0, lengthOfName)
-  const tweetFullText = tweetElement.getElementsByClassName("js-tweet-text")[0].innerText
-  const tweetShortText = tweetFullText.split("#")[0]
-  return {name, tweetShortText}
+  const name = tweetElement.getElementsByClassName("fullname")[0].textContent
+  const text = tweetElement.getElementsByClassName("js-tweet-text")[0].textContent
+  return {name, text}
 }
 
 const isHomeTimeline = container => container.parentNode.parentNode.previousElementSibling.textContent.trim().substr(0, 4) === "Home"
@@ -20,17 +17,16 @@ const run = () => {
   const target = document.getElementsByClassName("js-chirp-container")
   Array.from(target).filter(isHomeTimeline).forEach(column => {
     const observer = new MutationObserver(mutations => {
-      mutations.filter(mutation => mutation.type === "childList").forEach(mutation => {
+      mutations.forEach(mutation => {
         Array.from(mutation.addedNodes).reverse().forEach(tweetNode => {
-          const {name, tweetShortText} = extractText(tweetNode)
+          const {name, text} = extractText(tweetNode)
           speechSynthesis.cancel()
-          readText(name)
-          readText(tweetShortText)
+          speechSynthesis.speak(createUttr(name))
+          speechSynthesis.speak(createUttr(text))
         })
       })
     })
-    const config = { attributes: true, childList: true, characterData: true }
-    observer.observe(column, config)
+    observer.observe(column, {childList: true})
   })
 }
 
