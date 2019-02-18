@@ -1,0 +1,2 @@
+# ReadTweetDeck
+TweetDeckを読み上げるChrome拡張
