@@ -1,6 +1,6 @@
 const readText = text => {
-  const uttr = new SpeechSynthesisUtterance(text.substr(0, 30))
-  uttr.rate = 1.7
+  const uttr = new SpeechSynthesisUtterance(text)
+  uttr.rate = 1.6
   speechSynthesis.speak(uttr)
 }
 
@@ -23,6 +23,7 @@ const run = () => {
       mutations.filter(mutation => mutation.type === "childList").forEach(mutation => {
         Array.from(mutation.addedNodes).reverse().forEach(tweetNode => {
           const {name, tweetShortText} = extractText(tweetNode)
+          speechSynthesis.cancel()
           readText(name)
           readText(tweetShortText)
         })
