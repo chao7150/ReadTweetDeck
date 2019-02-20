@@ -20,9 +20,8 @@ const run = () => {
       mutations.forEach(mutation => {
         Array.from(mutation.addedNodes).reverse().forEach(tweetNode => {
           const {name, text} = extractText(tweetNode)
-          speechSynthesis.cancel()
           speechSynthesis.speak(createUttr(name))
-          speechSynthesis.speak(createUttr(text))
+          speechSynthesis.speak(createUttr(speechSynthesis.pending ? text.substr(0, 30) : text))
         })
       })
     })
